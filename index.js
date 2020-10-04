@@ -1,19 +1,21 @@
 const { response } = require("express");
 const express = require("express");
-const morgan = require('morgan')
+const morgan = require("morgan");
+const cors =require('cors')
+
 
 const app = express();
+app.use(cors())
 app.use(express.json());
 
-morgan.token('info', function getInfo (req) {
-    const info = JSON.stringify(req.body)
-    return info
-  })
+morgan.token("info", function getInfo(req) {
+  const info = JSON.stringify(req.body);
+  return info;
+});
 
-
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :info'))
-
-
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :info")
+);
 
 let notes = [
   {
@@ -71,10 +73,10 @@ app.post("/api/persons/", (req, res) => {
       error: "name and number required",
     });
   }
-  if(notes.some(person => person.name === req.body.name)) {
+  if (notes.some((person) => person.name === req.body.name)) {
     return res.status(404).json({
-        error: "name must be unique",
-      });
+      error: "name must be unique",
+    });
   }
   const id = Math.floor(Math.random() * 1000);
 
@@ -88,7 +90,7 @@ app.post("/api/persons/", (req, res) => {
   res.json(newPerson);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`);
