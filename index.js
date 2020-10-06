@@ -1,7 +1,10 @@
-const { response } = require("express");
+require('dotenv').config()
+//const { response } = require("express");
 const express = require("express");
 const morgan = require("morgan");
 const cors =require('cors')
+const Person = require('./mongo');
+const mongoose = require('mongoose');
 
 
 const app = express();
@@ -47,7 +50,19 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/api/persons", (req, res) => {
-  res.send(notes);
+  let ihmiset = []
+  Person.find({}).then(response => {
+    console.log('person', response)
+    //console.log('ressi', res.json(response))
+
+    res.json(response)
+   
+    //mongoose.connection.close()
+   // console.log(ihmiset)
+    
+    
+  })
+  //res.send(notes);
 });
 
 app.get("/api/persons/:id", (req, res) => {
@@ -79,19 +94,23 @@ app.post("/api/persons/", (req, res) => {
       error: "name must be unique",
     });
   }
-  const id = Math.floor(Math.random() * 1000);
+  
 
-  const newPerson = {
-    id: id,
+  const newPerson = new Person({
+    
     name: req.body.name,
     number: req.body.number,
-  };
+  });
 
-  notes = notes.concat(newPerson);
+  newPerson.save().then(result => {
+    console.log('person saved!')
+    mongoose.connection.close()
+    
+  })
   res.json(newPerson);
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`);
