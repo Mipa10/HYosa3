@@ -142,15 +142,29 @@ app.post("/api/persons/", (req, res, next) => {
     .then((result) => {
       console.log("person saved!");
       //mongoose.connection.close()
+    res.json(newPerson);
+      
     })
     .catch((error) => {
       next(error)
     });
-  res.json(newPerson);
 });
 
 const errorHandler = (error, req, res, next) => {
-  console.log(error.message)
+  console.log(error.name)
+  
+  
+  
+  
+  if(error.name === 'ValidationError') {
+   
+
+    
+  return res.status(400).send(error)
+   
+    
+  }
+  
 
   next(error)
   
